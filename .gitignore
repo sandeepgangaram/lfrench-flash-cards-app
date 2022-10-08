@@ -1,3 +1,4 @@
+data/words_to_learn.csv
 __pycache__/
 venv/
 .idea/*
