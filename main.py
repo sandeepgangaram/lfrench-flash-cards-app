@@ -8,11 +8,26 @@ BACKGROUND_COLOR = "#B1DDC6"
 words_data = pd.read_csv('data/french_words.csv')
 words_data_list = pd.DataFrame.to_dict(words_data, orient="records")
 
+# ---------------------------- LOGIC------------------------------- #
+flip_timer = None
+
 
 def next_card():
+    global flip_timer
+    if flip_timer is not None:
+        window.after_cancel(flip_timer)
     word = random.choice(words_data_list)
-    canvas.itemconfig(canvas_title, text='French')
-    canvas.itemconfig(canvas_word, text=word['French'])
+    canvas.itemconfig(canvas_image, image=card_front)
+    canvas.itemconfig(canvas_title, text='French', fill='black')
+    canvas.itemconfig(canvas_word, text=word['French'], fill='black')
+    flip_timer = window.after(3000, flip_card, word)
+
+
+def flip_card(word):
+    canvas.itemconfig(canvas_image, image=card_back)
+    canvas.itemconfig(canvas_title, text='English', fill='white')
+    canvas.itemconfig(canvas_word, text=word['English'], fill='white')
+
 # ---------------------------- UI SETUP ------------------------------- #
 
 
@@ -28,7 +43,7 @@ wrong = PhotoImage(file='images/wrong.png').subsample(2, 2)
 
 # Canvas
 canvas = Canvas(width=400, height=263)
-canvas.create_image(200, 131, image=card_front)
+canvas_image = canvas.create_image(200, 131, image=card_front)
 canvas.config(bg=BACKGROUND_COLOR, highlightthickness=0)
 canvas_title = canvas.create_text(200, 75, text='', font=('Ariel', 20, 'italic'))
 canvas_word = canvas.create_text(200, 131, text='', font=('Ariel', 30, 'bold'))
